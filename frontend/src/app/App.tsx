@@ -1,78 +1,127 @@
 import React, { useState, useEffect } from 'react'
 import {
   ShieldAlert,
-  ShieldCheck,
+  Radio,
+  Sparkles,
   PhoneCall,
   RotateCcw,
-  Sparkles,
-  Info,
-  Radio,
   CheckCircle2,
   X,
   Phone,
 } from 'lucide-react'
-import { fetchSampleCalls, fetchHealth } from '../lib/api'
-import { SampleCall, SupportedLanguage } from '../lib/types'
+import { fetchSampleCalls, fetchHealth, postEmergencyAlert } from '../lib/api'
+import { EmergencyContact, SampleCall, SupportedLanguage } from '../lib/types'
+import { useLanguage } from '../hooks/useLanguage'
 import { useCallStream } from '../hooks/useCallStream'
 import { LanguageSwitcher } from '../features/call/LanguageSwitcher'
+import { EmergencyContactCard } from '../features/home/EmergencyContactCard'
+import { CallPicker } from '../features/home/CallPicker'
 import { CallScreen } from '../features/call/CallScreen'
-import { WarningOverlay } from '../features/call/WarningOverlay'
+import { WarningOverlay } from '../features/warning/WarningOverlay'
+import { AlertSentToast } from '../features/warning/AlertSentToast'
+import { CallSummary } from '../features/summary/CallSummary'
 
 export const App: React.FC = () => {
+  const { language, setLanguage, t } = useLanguage()
   const [calls, setCalls] = useState<SampleCall[]>([])
   const [selectedCallId, setSelectedCallId] = useState<string>('scam_digital_arrest')
-  const [language, setLanguage] = useState<SupportedLanguage>('gu')
-  const [health, setHealth] = useState<{ status: string; gemini_model: string; live_gemini_active: boolean } | null>(null)
-  const [familyModalOpen, setFamilyModalOpen] = useState(false)
-  const [hangUpNotice, setHangUpNotice] = useState<string | null>(null)
+  const [mode, setMode] = useState<'live' | 'replay'>('replay')
+  const [health, setHealth] = useState<{
+    status: string
+    gemini_model: string
+    gemini_fallback_model: string
+    live_gemini_active: boolean
+    default_mode: string
+  } | null>(null)
 
-  const { callState, chunks, isStreaming, isFinished, startStream, stopStream } = useCallStream()
+  const [emergencyContact, setEmergencyContact] = useState<EmergencyContact>({
+    name: 'Ajay (Son)',
+    relationship: 'Son',
+    phone: '+91 98765 43210',
+  })
 
+  const [activeScreen, setActiveScreen] = useState<'home' | 'call' | 'summary'>('home')
+  const [familyDialerOpen, setFamilyDialerOpen] = useState(false)
+  const [toastDismissed, setToastDismissed] = useState(false)
+
+  const {
+    state,
+    chunks,
+    flags,
+    level,
+    alertSent,
+    isStreaming,
+    isFinished,
+    error,
+    startStream,
+    stopStream,
+  } = useCallStream()
+
+  // Load calls manifest and health on mount
   useEffect(() => {
     fetchSampleCalls()
       .then((data) => {
         setCalls(data)
-        if (data.length > 0) {
-          setSelectedCallId(data[0].id)
-        }
+        if (data.length > 0) setSelectedCallId(data[0].id)
       })
-      .catch((err) => console.error('Failed to load sample calls:', err))
+      .catch((err) => console.error('Failed to load calls:', err))
 
     fetchHealth()
-      .then(setHealth)
-      .catch((err) => console.error('Health check failed:', err))
+      .then((h) => {
+        setHealth(h)
+        if (h.live_gemini_active && h.default_mode === 'live') {
+          setMode('live')
+        }
+      })
+      .catch((err) => console.error('Health check error:', err))
   }, [])
+
+  // Auto transition to summary when call stream finishes naturally
+  useEffect(() => {
+    if (isFinished && activeScreen === 'call') {
+      setActiveScreen('summary')
+    }
+  }, [isFinished, activeScreen])
 
   const selectedCall = calls.find((c) => c.id === selectedCallId) || calls[0]
 
   const handleStartCall = () => {
     if (!selectedCall) return
-    setHangUpNotice(null)
-    startStream(selectedCall.id)
+    setActiveScreen('call')
+    setToastDismissed(false)
+    startStream(
+      selectedCall.id,
+      mode,
+      language,
+      emergencyContact.phone,
+      emergencyContact.relationship
+    )
   }
 
   const handleHangUp = () => {
     stopStream()
-    setHangUpNotice(
-      language === 'gu'
-        ? 'કૉલ કાપી નાખવામાં આવ્યો છે. તમે સુરક્ષિત છો!'
-        : language === 'hi'
-        ? 'कॉल काट दिया गया है. आप सुरक्षित हैं!'
-        : 'Call disconnected successfully. You are safe!'
-    )
-    setTimeout(() => {
-      setHangUpNotice(null)
-    }, 4500)
+    setActiveScreen('summary')
   }
 
   const handleCallFamily = () => {
-    setFamilyModalOpen(true)
+    setFamilyDialerOpen(true)
+    postEmergencyAlert(
+      emergencyContact.phone,
+      emergencyContact.relationship,
+      'Parent',
+      state.flags
+    ).catch((e) => console.warn('Manual alert dispatch failed', e))
   }
 
-  const isScamLevel = callState?.level === 'SCAM'
+  const handleResetToHome = () => {
+    stopStream()
+    setActiveScreen('home')
+  }
+
+  const isScamWarningOpen = level === 'SCAM' && activeScreen === 'call'
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans pb-16">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans pb-16 selection:bg-rose-500 selection:text-white">
       {/* Top Header */}
       <header className="border-b border-slate-800 bg-slate-900/70 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -86,201 +135,104 @@ export const App: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                  {language === 'gu'
-                    ? 'સ્કેમ કૉલ શીલ્ડ'
-                    : language === 'hi'
-                    ? 'स्कैम कॉल शील्ड'
-                    : 'Scam Call Shield'}
+                  {t('app_title')}
                 </h1>
                 <span className="text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2 py-0.5 rounded-full">
                   વૃદ્ધ સુરક્ષા કવચ
                 </span>
               </div>
               <p className="text-xs text-slate-400">
-                {language === 'gu'
-                  ? 'વડીલો માટે ગુજરાતી અને હિન્દી રીઅલ-ટાઇમ છેતરપિંડી સુરક્ષા'
-                  : language === 'hi'
-                  ? 'बुजुर्गों के लिए गुजराती और हिंदी रियल-टाइम धोखाधड़ी सुरक्षा'
-                  : 'Real-time elder telephone fraud shield with native Gujarati & Hindi AI'}
+                "{t('app_tagline')}" — {t('app_subtitle')}
               </p>
             </div>
           </div>
 
           {/* Right Header: System Status & Language Switcher */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* Mode badge */}
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs font-semibold">
               <Radio className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
               <span>
-                {health?.live_gemini_active
+                {mode === 'live' && health?.live_gemini_active
                   ? `Gemini Live (${health.gemini_model})`
                   : 'Replay Mode (Offline Safe)'}
               </span>
             </div>
 
-            {/* Language Switcher */}
             <LanguageSwitcher currentLang={language} onSelectLang={setLanguage} />
           </div>
         </div>
       </header>
 
-      {/* Main Body */}
+      {/* Main Content Area */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-1 flex flex-col gap-6 w-full">
-        {/* Hang Up Notice Banner */}
-        {hangUpNotice && (
-          <div className="w-full bg-emerald-500/20 border-2 border-emerald-500 text-emerald-200 p-4 rounded-2xl flex items-center justify-between text-lg font-bold shadow-xl animate-bounce">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-              <span>{hangUpNotice}</span>
-            </div>
-            <button
-              onClick={() => setHangUpNotice(null)}
-              className="text-emerald-300 hover:text-white"
-            >
-              <X className="w-5 h-5" />
-            </button>
+        {/* Screen 1: Home View (CallPicker + Contact Card) */}
+        {activeScreen === 'home' && (
+          <div className="flex flex-col gap-6">
+            <EmergencyContactCard
+              language={language}
+              onContactChange={setEmergencyContact}
+            />
+
+            <CallPicker
+              calls={calls}
+              selectedCallId={selectedCallId}
+              onSelectCall={setSelectedCallId}
+              onStartCall={handleStartCall}
+              language={language}
+              mode={mode}
+              onToggleMode={setMode}
+              liveGeminiActive={Boolean(health?.live_gemini_active)}
+            />
           </div>
         )}
 
-        {/* Call Scenario Picker Carousel */}
-        <section className="bg-slate-900/80 p-5 rounded-3xl border border-slate-800 shadow-xl">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-amber-400" />
-              <h2 className="font-extrabold text-lg text-white">
-                {language === 'gu'
-                  ? 'ડેમો કૉલ સિનારિયો પસંદ કરો'
-                  : language === 'hi'
-                  ? 'डेमो कॉल परिदृश्य चुनें'
-                  : 'Select Test Scenario Call'}
-              </h2>
-            </div>
-            <span className="text-xs text-slate-400">
-              3 Scam Attacks + 1 Genuine Verification Call
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5">
-            {calls.map((c) => {
-              const isSelected = c.id === selectedCallId
-              const isScam = c.expected_verdict === 'SCAM'
-
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => {
-                    if (isStreaming) stopStream()
-                    setSelectedCallId(c.id)
-                  }}
-                  className={`text-left p-4 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between ${
-                    isSelected
-                      ? isScam
-                        ? 'bg-rose-950/40 border-rose-500 shadow-lg shadow-rose-500/20 scale-[1.02]'
-                        : 'bg-emerald-950/40 border-emerald-500 shadow-lg shadow-emerald-500/20 scale-[1.02]'
-                      : 'bg-slate-800/60 border-slate-700/60 hover:bg-slate-800 hover:border-slate-600'
-                  }`}
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-1 mb-2">
-                      <span
-                        className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
-                          isScam
-                            ? 'bg-rose-500 text-white'
-                            : 'bg-emerald-500 text-slate-950'
-                        }`}
-                      >
-                        {isScam ? '🚨 SCAM' : '🟢 GENUINE'}
-                      </span>
-                      <span className="text-xs font-mono text-slate-400">{c.duration_sec}s</span>
-                    </div>
-
-                    <h3 className="font-bold text-white text-base leading-snug line-clamp-1">
-                      {c.title}
-                    </h3>
-                    <p className="text-xs text-slate-400 line-clamp-2 mt-1 leading-normal">
-                      {c.description}
-                    </p>
-                  </div>
-
-                  <div className="mt-3 pt-2 border-t border-slate-700/50 flex items-center justify-between text-xs text-slate-300">
-                    <span>{c.language}</span>
-                    <span className="font-semibold text-amber-300">
-                      {isSelected ? '✓ Selected' : 'Tap to test'}
-                    </span>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Simulation Trigger Bar */}
-          <div className="mt-4 pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-sm text-slate-400 flex items-center gap-2">
-              <Info className="w-4 h-4 text-emerald-400 shrink-0" />
-              <span>
-                {language === 'gu'
-                  ? 'પસંદ કરેલા કૉલ પર ક્લિક કરીને લાઈવ ઓડિયો પ્રોસેસિંગ શરૂ કરો.'
-                  : language === 'hi'
-                  ? 'चयनित कॉल पर क्लिक करके लाइव ऑडियो प्रोसेसिंग शुरू करें.'
-                  : 'Start the live stream to slice 16kHz audio into 5s chunks with AI risk scoring.'}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              {!isStreaming ? (
-                <button
-                  onClick={handleStartCall}
-                  className="flex-1 sm:flex-none min-h-[48px] px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-extrabold text-base rounded-2xl shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all"
-                >
-                  <PhoneCall className="w-5 h-5" />
-                  <span>
-                    {language === 'gu'
-                      ? 'કૉલ સિમ્યુલેશન શરૂ કરો'
-                      : language === 'hi'
-                      ? 'कॉल शुरू करें'
-                      : 'Start Call Simulation'}
-                  </span>
-                </button>
-              ) : (
-                <button
-                  onClick={stopStream}
-                  className="flex-1 sm:flex-none min-h-[48px] px-6 py-2.5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-extrabold text-base rounded-2xl shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  <span>
-                    {language === 'gu' ? 'કૉલ રોકો / રીસેટ' : language === 'hi' ? 'कॉल रोकें' : 'Stop / Reset'}
-                  </span>
-                </button>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* Live Call Screen */}
-        {selectedCall && (
+        {/* Screen 2: Active Call View */}
+        {activeScreen === 'call' && selectedCall && (
           <CallScreen
             call={selectedCall}
-            callState={callState}
+            callState={state}
             chunks={chunks}
+            flags={flags}
             language={language}
             isStreaming={isStreaming}
             onHangUp={handleHangUp}
             onCallFamily={handleCallFamily}
           />
         )}
+
+        {/* Screen 3: Summary View */}
+        {activeScreen === 'summary' && selectedCall && (
+          <CallSummary
+            call={selectedCall}
+            callState={state}
+            language={language}
+            onReset={handleResetToHome}
+          />
+        )}
       </main>
 
-      {/* SCAM Warning Full-Screen Takeover Modal */}
+      {/* Warning Overlay Takeover at SCAM Level */}
       <WarningOverlay
-        isOpen={isScamLevel}
+        isOpen={isScamWarningOpen}
         language={language}
         onHangUp={handleHangUp}
         onCallFamily={handleCallFamily}
-        detectedFlags={callState?.all_detected_flags || []}
+        detectedFlags={flags}
+        familyContactPhone={emergencyContact.phone}
+        familyRelationship={emergencyContact.relationship}
       />
 
-      {/* Emergency Call Family Contact Modal */}
-      {familyModalOpen && (
+      {/* Simulated SMS Alert Toast */}
+      {alertSent && !toastDismissed && (
+        <AlertSentToast
+          alert={alertSent}
+          language={language}
+          onDismiss={() => setToastDismissed(true)}
+        />
+      )}
+
+      {/* Manual Family Call Dialer Modal */}
+      {familyDialerOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border-2 border-emerald-500 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl flex flex-col items-center text-center gap-5">
             <div className="w-20 h-20 rounded-full bg-emerald-600/20 border-2 border-emerald-400 flex items-center justify-center">
@@ -296,19 +248,19 @@ export const App: React.FC = () => {
                   : 'Dialing Trusted Family Member...'}
               </h3>
               <p className="text-emerald-300 font-mono text-xl font-bold mt-2">
-                +91 98765 43210 (પુત્ર: અજય)
+                {emergencyContact.phone} ({emergencyContact.name})
               </p>
-              <p className="text-sm text-slate-400 mt-2">
+              <p className="text-sm text-slate-400 mt-2 font-sans">
                 {language === 'gu'
-                  ? 'તમારા પુત્રને તરત જ આ શંકાસ્પદ કૉલ અને લોકેશનની માહિતી મોકલવામાં આવી છે.'
+                  ? 'તમારા પરિવારના સભ્યને તાત્કાલિક સાયબર એલર્ટ મોકલી દેવાયો છે.'
                   : language === 'hi'
-                  ? 'आपके बेटे को तुरंत इस संदिग्ध कॉल की जानकारी भेज दी गई है.'
-                  : 'An emergency alert and live fraud transcript snippet have been forwarded.'}
+                  ? 'आपके परिवार को तुरंत सुरक्षा अलर्ट भेज दिया गया है.'
+                  : 'An emergency alert with the detected scam red flags has been dispatched (Simulated).'}
               </p>
             </div>
 
             <button
-              onClick={() => setFamilyModalOpen(false)}
+              onClick={() => setFamilyDialerOpen(false)}
               className="w-full min-h-[50px] bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl border border-slate-600 cursor-pointer text-base"
             >
               {language === 'gu' ? 'બંધ કરો' : language === 'hi' ? 'बंद करें' : 'Close'}
