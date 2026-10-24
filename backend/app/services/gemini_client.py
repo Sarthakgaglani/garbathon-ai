@@ -9,7 +9,7 @@ from backend.app.domain.schemas import ChunkAnalysis
 from backend.app.services.prompts import SCAM_DETECTION_SYSTEM_PROMPT, build_chunk_user_prompt
 from backend.app.services.replay_cache import ReplayCache
 
-logger = logging.getLogger("scam_shield.gemini")
+logger = logging.getLogger("raasradar.gemini")
 
 
 class GeminiClient:
@@ -98,12 +98,12 @@ class GeminiClient:
             expected_lang=expected_lang,
         )
 
-        # Attempt 1: Primary Model (with 8s timeout)
+        # Attempt 1: Primary Model (with 30s timeout for audio processing)
         for attempt in (1, 2):
             try:
                 result = await asyncio.wait_for(
                     asyncio.to_thread(self._call_model, self.primary_model, wav_bytes, prompt_text),
-                    timeout=8.0,
+                    timeout=30.0,
                 )
                 if result:
                     self.consecutive_failures = 0
@@ -121,7 +121,7 @@ class GeminiClient:
             logger.info(f"Trying fallback model: {self.fallback_model}")
             fallback_result = await asyncio.wait_for(
                 asyncio.to_thread(self._call_model, self.fallback_model, wav_bytes, prompt_text),
-                timeout=8.0,
+                timeout=30.0,
             )
             if fallback_result:
                 self.consecutive_failures = 0

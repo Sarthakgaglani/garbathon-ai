@@ -25,7 +25,7 @@ from backend.app.services.audio_chunker import AudioChunker
 from backend.app.services.gemini_client import gemini_service
 from backend.app.services.replay_cache import ReplayCache
 
-logger = logging.getLogger("scam_shield.routes")
+logger = logging.getLogger("raasradar.routes")
 router = APIRouter(prefix="/api")
 replay_cache = ReplayCache(cache_dir=settings.cache_dir)
 
@@ -41,7 +41,7 @@ class EmergencyAlertRequest(BaseModel):
 def health_check():
     return {
         "status": "healthy",
-        "service": "Scam Call Shield API",
+        "service": "RaasRadar API",
         "gemini_model": settings.gemini_model,
         "gemini_fallback_model": settings.gemini_fallback_model,
         "live_gemini_active": bool(settings.gemini_api_key),

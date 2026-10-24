@@ -1,7 +1,7 @@
 .PHONY: help dev dev-backend dev-frontend test replay check-size install
 
 help:
-	@echo "Scam Call Shield - Commands"
+	@echo "RaasRadar — Garbathon × Google | Commands"
 	@echo "  make install    - Install backend and frontend dependencies"
 	@echo "  make dev        - Run FastAPI backend and Vite frontend"
 	@echo "  make test       - Run full backend test suite"

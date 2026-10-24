@@ -5,8 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-4-argon"
-    gemini_fallback_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-2.5-flash"          # Free tier: 1500 req/day, 1M TPM
+    gemini_fallback_model: str = "gemini-2.0-flash-lite"  # Free tier fallback
     chunk_seconds: float = 5.0
     overlap_seconds: float = 0.5
     default_mode: str = "replay"  # "live" or "replay"
