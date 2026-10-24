@@ -1,45 +1,42 @@
 export type FlagType =
   | 'urgency'
   | 'threat'
-  | 'otp_request'
-  | 'money_request'
   | 'authority_claim'
   | 'isolation'
+  | 'otp_request'
+  | 'money_request'
 
 export type Level = 'SAFE' | 'SUSPICIOUS' | 'SCAM'
 
 export interface DetectedFlag {
   type: FlagType
   evidence: string
-  explanation_gu: string
-  explanation_hi: string
-  explanation_en?: string
+  confidence: number
 }
 
 export interface ChunkAnalysis {
   transcript: string
+  language: string
   flags: DetectedFlag[]
   speaker_claims_to_be?: string | null
+  summary_so_far: string
 }
 
 export interface CallState {
-  call_id: string
+  level: Level
+  flags: FlagType[]
+  score: number
+  summary: string
   chunk_index: number
   duration_sec: number
-  level: Level
-  score: number
-  flags: FlagType[]
-  all_detected_flags: DetectedFlag[]
-  transcript_history: string[]
   speaker_claims_to_be?: string | null
-  running_summary: string
-}
-
-export interface StreamEvent {
-  type: string
-  state: CallState
-  chunk: ChunkAnalysis
-  is_final: boolean
+  transcript_history: string[]
+  all_evidence: Array<{
+    type: string
+    evidence: string
+    confidence: number
+    t: number
+  }>
 }
 
 export interface SampleCall {
@@ -54,4 +51,49 @@ export interface SampleCall {
   danger_level: string
 }
 
+export interface EmergencyContact {
+  name: string
+  relationship: string
+  phone: string
+}
+
 export type SupportedLanguage = 'gu' | 'hi' | 'en'
+
+export interface CallStartedEvent {
+  call_id: string
+  total_chunks: number
+  mode: string
+}
+
+export interface ChunkAnalysisEvent {
+  index: number
+  t_start: number
+  t_end: number
+  transcript: string
+  new_flags: DetectedFlag[]
+  state: CallState
+}
+
+export interface LevelChangedEvent {
+  level: Level
+  previous_level: Level
+  score: number
+}
+
+export interface ScamDetectedEvent {
+  flags: FlagType[]
+  evidence: string[]
+  t: number
+}
+
+export interface AlertSentEvent {
+  contact: string
+  message: string
+  simulated: boolean
+}
+
+export interface CallEndedEvent {
+  final_level: Level
+  final_score: number
+  summary: string
+}
