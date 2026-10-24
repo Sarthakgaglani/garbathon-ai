@@ -1,11 +1,11 @@
-.PHONY: help dev test replay check-size install
+.PHONY: help dev dev-backend dev-frontend test replay check-size install
 
 help:
 	@echo "Scam Call Shield - Commands"
 	@echo "  make install    - Install backend and frontend dependencies"
 	@echo "  make dev        - Run FastAPI backend and Vite frontend"
-	@echo "  make test       - Run backend test suite"
-	@echo "  make replay     - Run offline replay verification"
+	@echo "  make test       - Run full backend test suite"
+	@echo "  make replay     - Verify offline replay cache"
 	@echo "  make check-size - Check git repository size (<10MB limit)"
 
 install:
@@ -22,7 +22,7 @@ test:
 	python -m pytest backend/tests -v
 
 replay:
-	python -c "from backend.app.services.replay_cache import ReplayCache; rc = ReplayCache(); [print('Verified Cache:', c, 'Chunks:', len(rc.load_call_cache(c))) for c in ['scam_digital_arrest', 'scam_electricity_kyc', 'scam_bank_lottery', 'genuine_bank_support']]"
+	python -c "from backend.app.services.replay_cache import ReplayCache; rc = ReplayCache(); [print('Verified Cache:', c, 'Chunks:', len(rc.load_call_cache(c))) for c in ['scam_digital_arrest', 'scam_electricity_kyc', 'scam_bank_lottery', 'genuine_swiggy_delivery']]"
 
 check-size:
 	git count-objects -vH
