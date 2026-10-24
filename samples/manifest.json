@@ -5,7 +5,7 @@
     "language": "Gujarati / Hindi",
     "caller_id": "+91 22 2262 0111 (Spoofed Crime Branch)",
     "expected_verdict": "SCAM",
-    "description": "Caller impersonates Mumbai Crime Branch police inspector, claims narcotics parcel seized in victim's name, threatens arrest, orders victim into isolation room, and demands ₹1,50,000 security deposit.",
+    "description": "Caller impersonates Mumbai Crime Branch police, claims narcotics parcel seized in victim's name, threatens arrest, orders victim into isolation room, and demands ₹1,50,000 security deposit.",
     "duration_sec": 20,
     "audio_file": "scam_digital_arrest.wav",
     "danger_level": "CRITICAL"
@@ -14,9 +14,9 @@
     "id": "scam_electricity_kyc",
     "title": "Electricity Bill Disconnection Scam (વીજળી બિલ)",
     "language": "Hindi / Hinglish",
-    "caller_id": "+91 94251 00921 (Fake Torrent/UGVCL)",
+    "caller_id": "+91 94251 00921 (Fake Electricity Board)",
     "expected_verdict": "SCAM",
-    "description": "Urgent warning that electricity power will be disconnected at 9:30 PM tonight due to unpaid bill update. Caller pressures victim to immediately share 6-digit OTP to prevent blackout.",
+    "description": "Urgent warning that home electricity will be disconnected tonight at 9:30 PM due to unpaid bill update. Caller pressures victim to immediately read out a 6-digit OTP to prevent blackout.",
     "duration_sec": 15,
     "audio_file": "scam_electricity_kyc.wav",
     "danger_level": "HIGH"
@@ -27,20 +27,20 @@
     "language": "Gujarati / English",
     "caller_id": "+91 88001 92843 (Fake SBI Manager)",
     "expected_verdict": "SCAM",
-    "description": "Caller congratulates elderly user on winning a ₹25,00,000 government lucky draw, requiring an upfront processing fee of ₹5,000 via UPI within 30 minutes.",
+    "description": "Caller congratulates elderly user on winning a ₹25,00,000 government lucky draw, requiring an upfront registration fee of ₹5,000 via UPI within 30 minutes before the prize lapses.",
     "duration_sec": 15,
     "audio_file": "scam_bank_lottery.wav",
     "danger_level": "HIGH"
   },
   {
-    "id": "genuine_bank_support",
-    "title": "Genuine Bank Support (બેંક કસ્ટમર કેર)",
-    "language": "Gujarati / English",
-    "caller_id": "1800 202 6161 (HDFC Verified Desk)",
+    "id": "genuine_swiggy_delivery",
+    "title": "Genuine Swiggy Delivery (સ્વિગી ડિલિવરી)",
+    "language": "English / Hinglish",
+    "caller_id": "+91 80 4670 6900 (Swiggy Partner)",
     "expected_verdict": "SAFE",
-    "description": "Customer care representative verifying branch query and address update. Explicitly reminds the customer that bank staff never asks for OTP or CVV. Never reaches scam verdict.",
+    "description": "Swiggy food delivery partner calling from the apartment gate to confirm flat number 302 and leave the package with security guard. Strictly remains green (SAFE) the whole time.",
     "duration_sec": 15,
-    "audio_file": "genuine_bank_support.wav",
+    "audio_file": "genuine_swiggy_delivery.wav",
     "danger_level": "NONE"
   }
 ]

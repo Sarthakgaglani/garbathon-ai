@@ -5,52 +5,51 @@
     "language": "Hindi / Hinglish",
     "expected_verdict": "SCAM"
   },
+  "total_chunks": 3,
   "chunks": [
     {
-      "transcript": "प्रिय उपभोक्ता, बिजली विभाग हेड ऑफिस से सूचना है। आपका पिछला बिजली बिल अपडेट नहीं हुआ है, इसलिए आज रात 9:30 बजे आपके घर का पावर कनेक्शन काट दिया जाएगा। (Dear consumer, notice from Electricity Dept. Your last bill is not updated, power will be disconnected tonight at 9:30 PM.)",
+      "transcript": "प्रिय उपभोक्ता, बिजली विभाग हेड ऑफिस से सूचना है। आपका बिल अपडेट नहीं हुआ है, इसलिए आज रात 9:30 बजे घर की बिजली काट दी जाएगी।",
+      "language": "hi",
       "flags": [
         {
           "type": "authority_claim",
-          "evidence": "बिजली विभाग हेड ऑफिस से सूचना है (notice from Electricity Dept Head Office)",
-          "explanation_gu": "લાઈટ બિલ / વીજળી વિભાગના અધિકારી હોવાનો ઢોંગ કરે છે.",
-          "explanation_hi": "बिजली विभाग के उच्च अधिकारी होने का ढोंग कर रहा है.",
-          "explanation_en": "Caller claims to be an electricity board executive."
+          "evidence": "बिजली विभाग हेड ऑफिस से सूचना है",
+          "confidence": 0.9
         },
         {
           "type": "urgency",
-          "evidence": "आज रात 9:30 बजे आपके घर का पावर कनेक्शन काट दिया जाएगा (power disconnected tonight at 9:30 PM)",
-          "explanation_gu": "આજે રાત્રે વીજળી કાપી નાખવાની ગભરાટ ફેલાવી રહ્યા છે.",
-          "explanation_hi": "आज रात ही बिजली काटने की धमकी देकर घबराहट पैदा कर रहा है.",
-          "explanation_en": "Caller creates panic about power disconnection tonight."
+          "evidence": "आज रात 9:30 बजे घर की बिजली काट दी जाएगी",
+          "confidence": 0.88
         }
       ],
-      "speaker_claims_to_be": "Electricity Board Office"
+      "speaker_claims_to_be": "Electricity Board Office",
+      "summary_so_far": "Caller claims power will be disconnected tonight at 9:30 PM due to pending bill update."
     },
     {
-      "transcript": "यदि आप तुरंत बिल अपडेट नहीं कराएंगे तो लाइन काटने का भारी चार्ज लगेगा और कानूनी नोटिस भेजा जाएगा। अभी सिर्फ 10 मिनट बाकी हैं। (If you don't update immediately, huge reconnection fee will be levied and legal notice will be issued. Only 10 minutes left.)",
+      "transcript": "यदि आपने तुरंत बिल अपडेट नहीं किया तो कनेक्शन कटने का भारी चार्ज लगेगा। आपके पास केवल 10 मिनट बाकी हैं।",
+      "language": "hi",
       "flags": [
         {
           "type": "urgency",
-          "evidence": "अभी सिर्फ 10 मिनट बाकी हैं (Only 10 minutes left)",
-          "explanation_gu": "વિચારવાનો કે પરિવારને પૂછવાનો સમય આપ્યા વગર 10 મિનિટનું દબાણ કરે છે.",
-          "explanation_hi": "सोचने या परिवार से पूछने का समय दिए बिना 10 मिनट की जल्दबाजी कर रहा है.",
-          "explanation_en": "Caller imposes extreme 10-minute urgency."
+          "evidence": "आपके पास केवल 10 मिनट बाकी हैं",
+          "confidence": 0.85
         }
       ],
-      "speaker_claims_to_be": "Electricity Board Office"
+      "speaker_claims_to_be": "Electricity Board Office",
+      "summary_so_far": "Caller applies intense urgency claiming only 10 minutes remain."
     },
     {
-      "transcript": "बिजली कटने से बचाने के लिए आपके मोबाइल पर अभी एक 6-अंकों का वेरिफिकेशन ओटीपी आया है। वह ओटीपी मुझे जल्दी से बोलिए। (To stop disconnection, quickly read out the 6-digit verification OTP received on your mobile.)",
+      "transcript": "लाइन कटने से बचाने के लिए आपके मोबाइल पर भेजा गया 6-अंकों का वेरिफिकेशन ओटीपी मुझे जल्दी से बताएं।",
+      "language": "hi",
       "flags": [
         {
           "type": "otp_request",
-          "evidence": "6-अंकों का वेरिफिकेशन ओटीपी आया है। वह ओटीपी मुझे जल्दी से बोलिए (Read out the 6-digit verification OTP)",
-          "explanation_gu": "ઓટીપી (OTP) માંગી રહ્યા છે. ઓટીપી આપવાથી તમારા બેંક ખાતામાંથી પૈસા કપાઈ જશે!",
-          "explanation_hi": "ओटीपी (OTP) मांग रहा है. कभी भी किसी को कॉल पर OTP न बताएं!",
-          "explanation_en": "Caller is directly demanding SMS OTP."
+          "evidence": "6-अंकों का वेरिफिकेशन ओटीपी मुझे जल्दी से बताएं",
+          "confidence": 0.96
         }
       ],
-      "speaker_claims_to_be": "Electricity Board Office"
+      "speaker_claims_to_be": "Electricity Board Office",
+      "summary_so_far": "Caller demands 6-digit SMS OTP to prevent immediate power disconnection."
     }
   ]
 }

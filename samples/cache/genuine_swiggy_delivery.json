@@ -1,0 +1,32 @@
+{
+  "call_id": "genuine_swiggy_delivery",
+  "metadata": {
+    "title": "Genuine Swiggy Delivery (સ્વિગી ડિલિવરી)",
+    "language": "English / Hinglish",
+    "expected_verdict": "SAFE"
+  },
+  "total_chunks": 3,
+  "chunks": [
+    {
+      "transcript": "Hello sir, I am your Swiggy delivery partner calling. I am standing downstairs at your apartment gate.",
+      "language": "en",
+      "flags": [],
+      "speaker_claims_to_be": "Swiggy Delivery Partner",
+      "summary_so_far": "Swiggy delivery driver calling from the apartment entrance gate."
+    },
+    {
+      "transcript": "Can you please confirm your flat number? Is it Flat 302 on the third floor of Block B?",
+      "language": "en",
+      "flags": [],
+      "speaker_claims_to_be": "Swiggy Delivery Partner",
+      "summary_so_far": "Driver confirming flat 302 Block B."
+    },
+    {
+      "transcript": "Okay great, I have handed over the food parcel to the security guard at the desk as instructed. Enjoy your meal!",
+      "language": "en",
+      "flags": [],
+      "speaker_claims_to_be": "Swiggy Delivery Partner",
+      "summary_so_far": "Food order delivered safely to building security guard."
+    }
+  ]
+}
