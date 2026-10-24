@@ -1,0 +1,33 @@
+{
+  "call_id": "genuine_bank_support",
+  "metadata": {
+    "title": "Genuine Bank Support (બેંક કસ્ટમર કેર)",
+    "language": "Gujarati / English",
+    "expected_verdict": "SAFE"
+  },
+  "chunks": [
+    {
+      "transcript": "નમસ્તે સર, હું એચડીએફસી બેંક કસ્ટમર સપોર્ટમાંથી પ્રિયા વાત કરું છું. ગઈકાલે શાખામાં આપેલી તમારી સરનામાં અપડેટ વિનંતી અંગે કૉલ કર્યો છે. (Namaste sir, I am Priya calling from HDFC Bank customer support regarding your branch address update request.)",
+      "flags": [
+        {
+          "type": "authority_claim",
+          "evidence": "એચડીએફસી બેંક કસ્ટમર સપોર્ટ (HDFC Bank customer support)",
+          "explanation_gu": "કૉલ કરનાર બેંક કસ્ટમર કેરમાંથી છે.",
+          "explanation_hi": "कॉलर बैंक कस्टमर सपोर्ट से है.",
+          "explanation_en": "Representative identifying as official bank support."
+        }
+      ],
+      "speaker_claims_to_be": "HDFC Bank Verified Support"
+    },
+    {
+      "transcript": "મારે માત્ર ખાતરી કરવાની છે કે તમે અમદાવાદ શાખામાં સરનામું બદલવા અરજી કરી હતી? જો હા, તો તમારી અરજી મંજૂર થઈ ગઈ છે. (Just verifying if you submitted an address change application at Ahmedabad branch? If yes, it has been approved.)",
+      "flags": [],
+      "speaker_claims_to_be": "HDFC Bank Verified Support"
+    },
+    {
+      "transcript": "કૃપા કરીને યાદ રાખો કે એચડીએફસી બેંક ક્યારેય તમારો ઓટીપી, પાસવર્ડ કે એટીએમ પિન પૂછતી નથી. આભાર, આપનો દિવસ શુભ રહે. (Please remember that HDFC Bank never asks for your OTP, password, or ATM PIN. Thank you, have a good day.)",
+      "flags": [],
+      "speaker_claims_to_be": "HDFC Bank Verified Support"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "call_id": "scam_bank_lottery",
+  "metadata": {
+    "title": "Fake Bank Lottery Scam (SBI લોટરી ઇનામ)",
+    "language": "Gujarati / English",
+    "expected_verdict": "SCAM"
+  },
+  "chunks": [
+    {
+      "transcript": "અભિનંદન સર! સ્ટેટ બેંક ઑફ ઇન્ડિયા લકી ડ્રો સ્કીમ હેઠળ તમારા મોબાઈલ નંબર પર ₹25,00,000 નું રોકડ ઇનામ લાગ્યું છે. (Congratulations sir! Under State Bank of India lucky draw, your mobile number has won a cash prize of ₹25,00,000.)",
+      "flags": [
+        {
+          "type": "authority_claim",
+          "evidence": "સ્ટેટ બેંક ઑફ ઇન્ડિયા લકી ડ્રો સ્કીમ (State Bank lucky draw scheme)",
+          "explanation_gu": "બેંકના નામે ખોટી લોટરી અથવા ઇનામની લાલચ આપી રહ્યા છે.",
+          "explanation_hi": "बैंक के नाम पर फर्जी लॉटरी या इनाम का लालच दे रहा है.",
+          "explanation_en": "Caller falsely claims affiliation with SBI Lucky Draw."
+        }
+      ],
+      "speaker_claims_to_be": "State Bank of India Reward Desk"
+    },
+    {
+      "transcript": "આ ઇનામ ક્લેમ કરવા માટે તમારે આજે સાંજે 5:00 વાગ્યા પહેલાં રજિસ્ટ્રેશન કરાવવું પડશે, નહીં તો ઇનામ રદ થઈ જશે. (To claim this prize you must complete registration before 5:00 PM today, or the prize will be cancelled.)",
+      "flags": [
+        {
+          "type": "urgency",
+          "evidence": "સાંજે 5:00 વાગ્યા પહેલાં રજિસ્ટ્રેશન કરાવવું પડશે (Must register before 5:00 PM)",
+          "explanation_gu": "ઇનામ ગુમાવવાનો ડર બતાવીને ઉતાવળ કરાવી રહ્યા છે.",
+          "explanation_hi": "इनाम रद्द होने का डर दिखाकर जल्दबाजी में निर्णय लेने का दबाव बना रहा है.",
+          "explanation_en": "Caller imposes arbitrary time limit to claim fake prize."
+        }
+      ],
+      "speaker_claims_to_be": "State Bank of India Reward Desk"
+    },
+    {
+      "transcript": "ચેક તમારા ઘરે પહોંચાડવા માટે તમારે સરકારી જીએસટી ટેક્સ પેટે ₹5,000 આ યુપીઆઈ આઈડી પર હમણાં જ ચૂકવવા પડશે. (To deliver the cheque to your home, you must pay ₹5,000 government GST tax right now to this UPI ID.)",
+      "flags": [
+        {
+          "type": "money_request",
+          "evidence": "જીએસટી ટેક્સ પેટે ₹5,000 આ યુપીઆઈ આઈડી પર હમણાં જ ચૂકવવા પડશે (Pay ₹5,000 GST to UPI ID now)",
+          "explanation_gu": "કોઈપણ સાચી બેંક કે લોટરી ક્યારેય અગાઉથી પૈસા કે ફી માંગતી નથી. આ છેતરપિંડી છે!",
+          "explanation_hi": "कोई भी असली बैंक या लॉटरी पहले पैसे या फीस नहीं मांगती. यह धोखाधड़ी है!",
+          "explanation_en": "Caller demands upfront fee via UPI to release nonexistent prize."
+        }
+      ],
+      "speaker_claims_to_be": "State Bank of India Reward Desk"
+    }
+  ]
+}

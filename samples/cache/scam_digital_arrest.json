@@ -1,0 +1,62 @@
+{
+  "call_id": "scam_digital_arrest",
+  "metadata": {
+    "title": "Digital Arrest Scam (ડિજિટલ અરેસ્ટ)",
+    "language": "Gujarati / Hindi",
+    "expected_verdict": "SCAM"
+  },
+  "chunks": [
+    {
+      "transcript": "નમસ્તે, હું મુંબઈ ક્રાઈમ બ્રાન્ચમાંથી ઇન્સ્પેક્ટર રાઠોડ બોલું છું. તમારા આધાર કાર્ડ પર એક ગંભીર કેસ દાખલ થયો છે. (Hello, I am Inspector Rathore speaking from Mumbai Crime Branch. A serious case has been registered against your Aadhaar card.)",
+      "flags": [
+        {
+          "type": "authority_claim",
+          "evidence": "મુંબઈ ક્રાઈમ બ્રાન્ચમાંથી ઇન્સ્પેક્ટર રાઠોડ બોલું છું (Inspector Rathore speaking from Mumbai Crime Branch)",
+          "explanation_gu": "કૉલ કરનાર વ્યક્તિ પોલીસ કે ક્રાઈમ બ્રાન્ચ અધિકારી હોવાનો દાવો કરે છે.",
+          "explanation_hi": "कॉलर मुंबई क्राइम ब्रांच का पुलिस अधिकारी होने का दावा कर रहा है.",
+          "explanation_en": "Caller claims to be an Inspector from Mumbai Police Crime Branch."
+        }
+      ],
+      "speaker_claims_to_be": "Mumbai Police Crime Branch"
+    },
+    {
+      "transcript": "તમારા નામે કસ્ટમ્સમાં આવેલ ફેડેક્સ પાર્સલમાંથી ગેરકાયદેસર નશીલી દવાઓ અને નકલી પાસપોર્ટ મળી આવ્યા છે. સુપ્રીમ કોર્ટ દ્વારા તમારી વિરુદ્ધ ધરપકડનું વોરંટ નીકળી ચૂક્યું છે. (An illegal narcotics parcel in your name was seized by customs. An arrest warrant has been issued against you by the Supreme Court.)",
+      "flags": [
+        {
+          "type": "threat",
+          "evidence": "ધરપકડનું વોરંટ નીકળી ચૂક્યું છે (arrest warrant has been issued against you)",
+          "explanation_gu": "તરત જેલમાં પૂરવા અને ધરપકડ કરવાની ગેરકાયદે ધમકી આપી રહ્યા છે.",
+          "explanation_hi": "तुरंत गिरफ्तारी और जेल भेजने की झूठी कानूनी धमकी दे रहा है.",
+          "explanation_en": "Caller is threatening immediate arrest and criminal prosecution."
+        }
+      ],
+      "speaker_claims_to_be": "Mumbai Police Crime Branch"
+    },
+    {
+      "transcript": "હમણાં ને હમણાં રૂમનો દરવાજો બંધ કરી દો. આ ડિજિટલ અરેસ્ટ છે. પરિવારના કોઈ સભ્યને જણાવશો નહીં, અને વિડિયો કૉલ ચાલુ જ રાખજો. (Lock your room door right now. This is a Digital Arrest. Do not tell your family members and keep the video call active.)",
+      "flags": [
+        {
+          "type": "isolation",
+          "evidence": "રૂમનો દરવાજો બંધ કરી દો, પરિવારના કોઈ સભ્યને જણાવશો નહીં (Lock room door, do not tell family)",
+          "explanation_gu": "પોલીસ ક્યારેય વીડિયો કોલ પર 'ડિજિટલ અરેસ્ટ' કરતી નથી કે પરિવારથી અલગ રહેવા દબાણ કરતી નથી.",
+          "explanation_hi": "पुलिस कभी वीडियो कॉल पर 'डिजिटल अरेस्ट' नहीं करती और न ही कमरे में बंद रहने को कहती है.",
+          "explanation_en": "Caller demands isolation from family under the fake guise of 'Digital Arrest'."
+        }
+      ],
+      "speaker_claims_to_be": "Mumbai Police Crime Branch"
+    },
+    {
+      "transcript": "કેસમાંથી તમારું નામ હટાવવા અને વેરિફિકેશન માટે તાત્કાલિક આરબીઆઈ સેફ એકાઉન્ટમાં ₹1,50,000 ટ્રાન્સફર કરો, તપાસ પછી પૈસા પરત મળશે. (To clear your name, transfer ₹1,50,000 immediately to RBI safe account; it will be refunded after verification.)",
+      "flags": [
+        {
+          "type": "money_request",
+          "evidence": "આરબીઆઈ સેફ એકાઉન્ટમાં ₹1,50,000 ટ્રાન્સફર કરો (Transfer ₹1,50,000 to RBI safe account)",
+          "explanation_gu": "સરકારી તપાસના નામે તાત્કાલિક પૈસા ટ્રાન્સફર કરવા દબાણ કરી રહ્યા છે. આ સંપૂર્ણ છેતરપિંડી છે!",
+          "explanation_hi": "सरकारी जांच के नाम पर तुरंत पैसे ट्रांसफर करने की मांग कर रहा है. यह पक्का फ्रॉड है!",
+          "explanation_en": "Caller demands immediate bank transfer under the pretext of RBI clearance."
+        }
+      ],
+      "speaker_claims_to_be": "Mumbai Police Crime Branch"
+    }
+  ]
+}

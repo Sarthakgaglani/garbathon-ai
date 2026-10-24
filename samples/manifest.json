@@ -1,0 +1,46 @@
+[
+  {
+    "id": "scam_digital_arrest",
+    "title": "Digital Arrest Scam (ડિજિટલ અરેસ્ટ)",
+    "language": "Gujarati / Hindi",
+    "caller_id": "+91 22 2262 0111 (Spoofed Crime Branch)",
+    "expected_verdict": "SCAM",
+    "description": "Caller impersonates Mumbai Crime Branch police inspector, claims narcotics parcel seized in victim's name, threatens arrest, orders victim into isolation room, and demands ₹1,50,000 security deposit.",
+    "duration_sec": 20,
+    "audio_file": "scam_digital_arrest.wav",
+    "danger_level": "CRITICAL"
+  },
+  {
+    "id": "scam_electricity_kyc",
+    "title": "Electricity Bill Disconnection Scam (વીજળી બિલ)",
+    "language": "Hindi / Hinglish",
+    "caller_id": "+91 94251 00921 (Fake Torrent/UGVCL)",
+    "expected_verdict": "SCAM",
+    "description": "Urgent warning that electricity power will be disconnected at 9:30 PM tonight due to unpaid bill update. Caller pressures victim to immediately share 6-digit OTP to prevent blackout.",
+    "duration_sec": 15,
+    "audio_file": "scam_electricity_kyc.wav",
+    "danger_level": "HIGH"
+  },
+  {
+    "id": "scam_bank_lottery",
+    "title": "Fake Bank Lottery Scam (SBI લોટરી ઇનામ)",
+    "language": "Gujarati / English",
+    "caller_id": "+91 88001 92843 (Fake SBI Manager)",
+    "expected_verdict": "SCAM",
+    "description": "Caller congratulates elderly user on winning a ₹25,00,000 government lucky draw, requiring an upfront processing fee of ₹5,000 via UPI within 30 minutes.",
+    "duration_sec": 15,
+    "audio_file": "scam_bank_lottery.wav",
+    "danger_level": "HIGH"
+  },
+  {
+    "id": "genuine_bank_support",
+    "title": "Genuine Bank Support (બેંક કસ્ટમર કેર)",
+    "language": "Gujarati / English",
+    "caller_id": "1800 202 6161 (HDFC Verified Desk)",
+    "expected_verdict": "SAFE",
+    "description": "Customer care representative verifying branch query and address update. Explicitly reminds the customer that bank staff never asks for OTP or CVV. Never reaches scam verdict.",
+    "duration_sec": 15,
+    "audio_file": "genuine_bank_support.wav",
+    "danger_level": "NONE"
+  }
+]
