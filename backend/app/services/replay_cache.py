@@ -1,13 +1,16 @@
 import json
+import logging
 from pathlib import Path
-from typing import Optional
+from typing import Any, Dict, List, Optional
 from backend.app.domain.schemas import ChunkAnalysis
+
+logger = logging.getLogger("scam_shield.cache")
 
 
 class ReplayCache:
     """
-    Manages pre-computed chunk analyses in samples/cache/{call_id}.json.
-    Ensures 100% offline reliability for live presentations and offline judges.
+    Loads and persists precomputed chunk analyses from samples/cache/{id}.json.
+    Ensures zero-config offline execution for presentations and evaluations.
     """
 
     def __init__(self, cache_dir: str | Path = "samples/cache"):
@@ -20,17 +23,18 @@ class ReplayCache:
     def has_cache(self, call_id: str) -> bool:
         return self.get_cache_path(call_id).is_file()
 
-    def load_call_cache(self, call_id: str) -> list[ChunkAnalysis]:
+    def load_call_cache(self, call_id: str) -> List[ChunkAnalysis]:
         cache_path = self.get_cache_path(call_id)
         if not cache_path.is_file():
+            logger.warning(f"No cache file found at {cache_path}")
             return []
         try:
             with open(cache_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            chunks = [ChunkAnalysis.model_validate(c) for c in data.get("chunks", [])]
-            return chunks
+            chunks_raw = data.get("chunks", [])
+            return [ChunkAnalysis.model_validate(c) for c in chunks_raw]
         except Exception as e:
-            print(f"Error loading cache for {call_id}: {e}")
+            logger.error(f"Failed to read cache for {call_id}: {e}")
             return []
 
     def get_chunk(self, call_id: str, chunk_index: int) -> Optional[ChunkAnalysis]:
@@ -39,12 +43,19 @@ class ReplayCache:
             return chunks[chunk_index]
         return None
 
-    def save_call_cache(self, call_id: str, chunks: list[ChunkAnalysis], metadata: Optional[dict] = None) -> None:
+    def save_call_cache(
+        self,
+        call_id: str,
+        chunks: List[ChunkAnalysis],
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> None:
         cache_path = self.get_cache_path(call_id)
         payload = {
             "call_id": call_id,
             "metadata": metadata or {},
+            "total_chunks": len(chunks),
             "chunks": [c.model_dump() for c in chunks],
         }
         with open(cache_path, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
+        logger.info(f"Saved {len(chunks)} cached chunks to {cache_path}")
