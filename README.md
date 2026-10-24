@@ -1,11 +1,11 @@
-# Scam Call Shield — Real-time Voice AI Fraud Defense for Elders
+# RaasRadar — Real-time Voice AI Fraud Defense for Elders
 
 [![Tests](https://img.shields.io/badge/pytest-13%20passed-brightgreen.svg)]()
 [![Gemini](https://img.shields.io/badge/Gemini-Flash%20Audio-blue.svg)]()
 [![Languages](https://img.shields.io/badge/Languages-Gujarati%20%7C%20Hindi%20%7C%20English-orange.svg)]()
 [![Repo Size](https://img.shields.io/badge/Repo%20Size-%3C%205MB%20(Under%2010MB%20limit)-success.svg)]()
 
-> **Scam Call Shield** protects senior citizens from high-pressure telephone scams ("Digital Arrest", fake courier drug busts, power disconnection threats, and OTP phishing) using Gemini Flash audio understanding, a deterministic zero-false-alarm risk engine, and an accessible, high-contrast traffic-light UI with full-screen emergency takeover and **The Safe Exit Bailout** (doorbell interruption excuse).
+> **RaasRadar** protects senior citizens from high-pressure telephone scams ("Digital Arrest", fake courier drug busts, power disconnection threats, and OTP phishing) using Gemini Flash audio understanding, a deterministic zero-false-alarm risk engine, and an accessible, high-contrast traffic-light UI with full-screen emergency takeover and **The Safe Exit Bailout** (doorbell interruption excuse). Built at **Garbathon × Google**.
 
 ---
 
@@ -121,6 +121,7 @@ python -m pytest backend/tests -v
 
 ### 3. Start Backend API
 ```bash
+# ⚠️  Run from the PROJECT ROOT (d:\garbathon), NOT from inside backend/
 python -m uvicorn backend.app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 API running at `http://localhost:8000` (Docs: `http://localhost:8000/docs`).
