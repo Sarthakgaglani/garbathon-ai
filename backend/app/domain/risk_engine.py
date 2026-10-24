@@ -1,62 +1,83 @@
+from typing import Optional, Tuple
 from backend.app.domain.red_flags import CRITICAL_FLAGS, WEIGHTS, FlagType
-from backend.app.domain.schemas import CallState, ChunkAnalysis, Level
+from backend.app.domain.schemas import CallState, ChunkAnalysis, DetectedFlag, Level
+
+CONFIDENCE_THRESHOLD = 0.6
 
 
 class RiskEngine:
     """
     Deterministic risk scoring and state machine for scam call detection.
-    Enforces strict hysteresis: SAFE -> SUSPICIOUS -> SCAM.
-    A state, once upgraded to SCAM, can NEVER downgrade mid-call.
+    Guarantees:
+    1. Accumulate distinct flags only when confidence >= 0.6.
+    2. SCAM if (>=2 distinct flags AND at least 1 CRITICAL) OR score >= 8.
+    3. SUSPICIOUS if score >= 3.
+    4. Strict hysteresis: SCAM can NEVER downgrade; SUSPICIOUS can NEVER drop to SAFE.
+    5. A single authority/bank mention alone never triggers SCAM.
     """
 
     @staticmethod
-    def update(state: CallState, analysis: ChunkAnalysis, chunk_duration_sec: float = 5.0) -> CallState:
-        # 1. Increment chunk index and duration
+    def update(
+        state: CallState,
+        analysis: ChunkAnalysis,
+        chunk_duration_sec: float = 5.0,
+    ) -> Tuple[CallState, list[DetectedFlag], Optional[Level]]:
+        previous_level = state.level
+
+        # 1. Update temporal stats
         state.chunk_index += 1
         state.duration_sec = state.chunk_index * chunk_duration_sec
 
-        # 2. Update transcripts
+        # 2. Update transcripts & claims
         if analysis.transcript and analysis.transcript.strip():
             state.transcript_history.append(analysis.transcript.strip())
 
-        # 3. Update claimed identity if found
         if analysis.speaker_claims_to_be:
             state.speaker_claims_to_be = analysis.speaker_claims_to_be
 
-        # 4. Accumulate distinct flags
-        existing_flag_set = set(state.flags)
-        for flag in analysis.flags:
-            existing_flag_set.add(flag.type)
-            state.all_detected_flags.append(flag)
-        state.flags = list(existing_flag_set)
+        if analysis.summary_so_far:
+            state.summary = analysis.summary_so_far
 
-        # 5. Compute deterministic score based on distinct accumulated flags
-        score = sum(WEIGHTS.get(flag_type, 0) for flag_type in existing_flag_set)
+        # 3. Filter flags with confidence >= 0.6
+        existing_flags = set(state.flags)
+        newly_accepted_flags: list[DetectedFlag] = []
+
+        for flag in analysis.flags:
+            if flag.confidence >= CONFIDENCE_THRESHOLD:
+                if flag.type not in existing_flags:
+                    existing_flags.add(flag.type)
+                    newly_accepted_flags.append(flag)
+                    state.all_evidence.append({
+                        "type": flag.type.value,
+                        "evidence": flag.evidence,
+                        "confidence": flag.confidence,
+                        "t": state.duration_sec,
+                    })
+
+        state.flags = list(existing_flags)
+
+        # 4. Calculate score
+        score = sum(WEIGHTS.get(f, 0) for f in existing_flags)
         state.score = score
 
-        # 6. Evaluate state machine thresholds
-        has_critical = bool(existing_flag_set & CRITICAL_FLAGS)
-        has_multiple_signals = len(existing_flag_set) >= 2
+        # 5. Evaluate target level
+        has_critical = bool(existing_flags & CRITICAL_FLAGS)
+        has_multiple_flags = len(existing_flags) >= 2
 
-        if (has_critical and has_multiple_signals) or score >= 8:
-            new_level = Level.SCAM
+        if (has_multiple_flags and has_critical) or score >= 8:
+            target_level = Level.SCAM
         elif score >= 3:
-            new_level = Level.SUSPICIOUS
+            target_level = Level.SUSPICIOUS
         else:
-            new_level = Level.SAFE
+            target_level = Level.SAFE
 
-        # 7. Apply hysteresis (never downgrade)
+        # 6. Apply strict hysteresis
         if state.level == Level.SCAM:
-            pass  # Already SCAM, never change
-        elif new_level > state.level:
-            state.level = new_level
+            pass  # Never downgrade from SCAM
+        elif state.level == Level.SUSPICIOUS:
+            state.level = max(Level.SUSPICIOUS, target_level)  # Can only stay or upgrade to SCAM
+        else:
+            state.level = target_level
 
-        # 8. Update running summary
-        flags_str = ", ".join(f.value for f in state.flags) if state.flags else "none"
-        claims = state.speaker_claims_to_be or "Unspecified"
-        state.running_summary = (
-            f"Speaker claimed: {claims}. Flags observed: [{flags_str}]. "
-            f"Current Risk Level: {state.level.value} (Score: {state.score})."
-        )
-
-        return state
+        level_changed = state.level if state.level != previous_level else None
+        return state, newly_accepted_flags, level_changed

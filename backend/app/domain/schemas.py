@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 from pydantic import BaseModel, Field
 from backend.app.domain.red_flags import FlagType
 
@@ -36,33 +36,72 @@ class Level(str, Enum):
 
 class DetectedFlag(BaseModel):
     type: FlagType
-    evidence: str = Field(description="Short quote from audio, in original language spoken")
-    explanation_gu: str = Field(description="One simple sentence in Gujarati explaining the risk to an elder")
-    explanation_hi: str = Field(description="One simple sentence in Hindi explaining the risk to an elder")
-    explanation_en: str = Field(default="", description="One simple sentence in English")
+    evidence: str = Field(description="Short quote from audio in original spoken language")
+    confidence: float = Field(default=0.9, ge=0.0, le=1.0, description="Confidence score between 0.0 and 1.0")
 
 
 class ChunkAnalysis(BaseModel):
-    transcript: str = Field(description="Verbatim or close transcript of the chunk audio")
-    flags: list[DetectedFlag] = Field(default_factory=list, description="List of detected scam flags in this chunk")
-    speaker_claims_to_be: Optional[str] = Field(default=None, description="Who the caller claims to represent (e.g. Police, Bank, Courier)")
+    transcript: str = Field(default="", description="Verbatim transcript in original script")
+    language: str = Field(default="gu", description="Language of chunk (gu, hi, or en)")
+    flags: list[DetectedFlag] = Field(default_factory=list, description="Detected scam red flags in this chunk")
+    speaker_claims_to_be: Optional[str] = Field(default=None, description="Who speaker claims to be (Police, CBI, Courier, Bank, etc.)")
+    summary_so_far: str = Field(default="", description="1-2 line summary of conversation so far")
 
 
 class CallState(BaseModel):
-    call_id: str
+    level: Level = Level.SAFE
+    flags: list[FlagType] = Field(default_factory=list, description="Accumulated distinct flags (confidence >= 0.6)")
+    score: int = 0
+    summary: str = ""
     chunk_index: int = 0
     duration_sec: float = 0.0
-    level: Level = Level.SAFE
-    score: int = 0
-    flags: list[FlagType] = Field(default_factory=list)
-    all_detected_flags: list[DetectedFlag] = Field(default_factory=list)
-    transcript_history: list[str] = Field(default_factory=list)
     speaker_claims_to_be: Optional[str] = None
-    running_summary: str = ""
+    transcript_history: list[str] = Field(default_factory=list)
+    all_evidence: list[dict[str, Any]] = Field(default_factory=list)
 
 
-class StreamEvent(BaseModel):
-    type: str = "chunk_update"
+# --- Typed SSE Event Models ---
+
+class CallStartedData(BaseModel):
+    call_id: str
+    total_chunks: int
+    mode: str = "live"
+
+
+class ChunkAnalysisData(BaseModel):
+    index: int
+    t_start: float
+    t_end: float
+    transcript: str
+    new_flags: list[DetectedFlag]
     state: CallState
-    chunk: ChunkAnalysis
-    is_final: bool = False
+
+
+class LevelChangedData(BaseModel):
+    level: Level
+    previous_level: Level
+    score: int
+
+
+class ScamDetectedData(BaseModel):
+    flags: list[FlagType]
+    evidence: list[str]
+    t: float
+
+
+class AlertSentData(BaseModel):
+    contact: str
+    message: str
+    simulated: bool = True
+
+
+class CallEndedData(BaseModel):
+    final_level: Level
+    final_score: int
+    summary: str
+
+
+class ErrorData(BaseModel):
+    code: str
+    message: str
+    recoverable: bool = True
